@@ -25,7 +25,10 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> Login(
         [FromBody] AuthEntity auth)
     { 
-        throw new NotImplementedException();
+        var targetUser = await _userAuthenticator.AuthenticateAsync(auth.Username, auth.Password);
+
+        if (targetUser == null) return Unauthorized();
+
     }
 
     /// <summary>
