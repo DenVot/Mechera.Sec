@@ -6,5 +6,5 @@ public partial class User
 
     public byte[] PasswordHash { get; set; } = null!;
 
-    public ulong IsRoot { get; set; }
+    public bool IsRoot { get; set; }
 }
