@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\Mechera.Sec.Data\Mechera.Sec.Data.csproj" />
   </ItemGroup>
 
 </Project>
