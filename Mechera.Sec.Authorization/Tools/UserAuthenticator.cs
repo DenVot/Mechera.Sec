@@ -32,9 +32,11 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
         return targetUser;
     }
 
-    public Task<bool> CheckIfUserExistsAsync(string username)
+    public async Task<bool> CheckIfUserExistsAsync(string username)
     {
-        throw new NotImplementedException();
+        var targetUser = await _usersRepository.GetAsync(username);
+
+        return targetUser != null;
     }   
 
     public void Dispose()
