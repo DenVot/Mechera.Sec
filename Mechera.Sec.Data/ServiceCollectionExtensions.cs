@@ -13,6 +13,10 @@ public static class ServiceCollectionExtensions
 #if DEBUG
         serviceCollection.AddScoped<IUsersRepository, EfUsersRepository>()
             .Decorate<IUsersRepository, RedisCacheUsersRepository>()
+            .AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");                
+            })
             .AddDbContext<MecheraDbContext>(dbContextOptions => dbContextOptions
                 .UseMySql(configuration.GetConnectionString("MecheraSecDB"), new MySqlServerVersion(new Version(8, 0, 31)))
                 .LogTo(Console.WriteLine, LogLevel.Information)
