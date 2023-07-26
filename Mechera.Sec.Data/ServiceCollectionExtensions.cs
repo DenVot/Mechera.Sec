@@ -9,7 +9,7 @@ namespace Mechera.Sec.Data;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection UseMecheraSecData(this IServiceCollection serviceCollection, IConfiguration configuration) =>
+    public static IServiceCollection AddMecheraSecData(this IServiceCollection serviceCollection, IConfiguration configuration) =>
 #if DEBUG
         serviceCollection.AddScoped<IUsersRepository, EfUsersRepository>()
             .Decorate<IUsersRepository, RedisCacheUsersRepository>()
