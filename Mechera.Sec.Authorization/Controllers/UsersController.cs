@@ -1,5 +1,7 @@
 ﻿using Mechera.Sec.Authorization.Entities;
 using Mechera.Sec.Authorization.Tools;
+using Mechera.Sec.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechera.Sec.Authorization.Controllers;
@@ -29,16 +31,34 @@ public class UsersController : ControllerBase
 
         if (targetUser == null) return Unauthorized();
 
+        SetupHeadersWithJwt(targetUser);       
+
+        return Ok(UserInfoEntity.Create(targetUser));
     }
 
     /// <summary>
     /// Производит операцию верифакации токена
-    /// </summary>
-    /// <param name="jwt">Токен</param>    
+    /// </summary>    
+    [Authorize]
     [HttpGet("verify")]
-    public async Task<IActionResult> VerifyToken(
-        [FromQuery] string jwt)
+    public async Task<IActionResult> VerifyToken()
     {
-        throw new NotImplementedException();
+        var usernameClaim = User.FindFirst("username");
+        var roleClaim = User.FindFirst("role");
+
+        if (usernameClaim == null || 
+            roleClaim == null ||
+            !await _userAuthenticator.CheckIfUserExistsAsync(usernameClaim.Value))
+        {
+            return Unauthorized();
+        }
+
+        return Ok(new UserInfoEntity(usernameClaim.Value, roleClaim.Value));
+    }
+
+    private void SetupHeadersWithJwt(User user)
+    {
+        var jwt = _jwtGenerator.GenerateToken(user);
+        Response.Headers.Add("Authorization", jwt);
     }
 }
