@@ -25,15 +25,16 @@ public class UsersController : ControllerBase
     /// <param name="auth">Аунтефикационные параметры</param>    
     [HttpPost("login")]
     public async Task<IActionResult> Login(
-        [FromBody] AuthEntity auth)
+        [FromBody] AuthEntity auth, 
+        [FromQuery] string redirectOnSuccess)
     { 
         var targetUser = await _userAuthenticator.AuthenticateAsync(auth.Username, auth.Password);
 
-        if (targetUser == null) return Unauthorized();
+        if (targetUser == null) return Unauthorized();        
 
-        SetupHeadersWithJwt(targetUser);       
+        var jwt = _jwtGenerator.GenerateToken(targetUser);
 
-        return Ok(UserInfoEntity.Create(targetUser));
+        return Redirect(redirectOnSuccess + $"jwt={jwt}");
     }
 
     /// <summary>
@@ -54,11 +55,5 @@ public class UsersController : ControllerBase
         }
 
         return Ok(new UserInfoEntity(usernameClaim.Value, roleClaim.Value));
-    }
-
-    private void SetupHeadersWithJwt(User user)
-    {
-        var jwt = _jwtGenerator.GenerateToken(user);
-        Response.Headers.Add("Authorization", jwt);
     }
 }
