@@ -1,5 +1,5 @@
-function AuthPage() {
-    return 
-    <div>
-    </div>
+export function AuthPage() {
+    return <form method="post">
+        <span>Hello</span>
+    </form>
 }
