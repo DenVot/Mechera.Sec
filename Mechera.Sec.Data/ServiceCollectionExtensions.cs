@@ -11,7 +11,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMecheraSecData(this IServiceCollection serviceCollection, IConfiguration configuration) =>
 #if DEBUG
-        serviceCollection.AddScoped<IUsersRepository, EfUsersRepository>()
+        serviceCollection
+            .AddScoped<IUsersRepository, EfUsersRepository>()
             .Decorate<IUsersRepository, RedisCacheUsersRepository>()
             .AddStackExchangeRedisCache(options =>
             {
@@ -23,8 +24,13 @@ public static class ServiceCollectionExtensions
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors());
 #else
-        serviceCollection.AddScoped<IUsersRepository, EfUsersRepository>()
+        .AddScoped<IUsersRepository, EfUsersRepository>(serviceProvider => 
+                new EfUsersRepository(serviceProvider.GetRequiredService<MecheraDbContext>()))
             .Decorate<IUsersRepository, RedisCacheUsersRepository>()
+            .AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");                
+            })
             .AddDbContext<MecheraDbContext>(dbContextOptions => dbContextOptions
                 .UseMySql(configuration.GetConnectionString("MecheraSecDB"), new MySqlServerVersion(new Version(8, 0, 31))));
 #endif

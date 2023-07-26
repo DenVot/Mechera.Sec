@@ -9,11 +9,11 @@ namespace Mechera.Sec.Data.Repositories;
 public class EfUsersRepository : IUsersRepository
 {
     private readonly DbSet<User> _users;
-    private readonly DbContext _dbContext;
+    private readonly MecheraDbContext _dbContext;
 
-    public EfUsersRepository(DbContext dbContext)
+    public EfUsersRepository(MecheraDbContext dbContext)
     {
-        _users = dbContext.Set<User>();
+        _users = dbContext.Users;
         _dbContext = dbContext;
     }
 

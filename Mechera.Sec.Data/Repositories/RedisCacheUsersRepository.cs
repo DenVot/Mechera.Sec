@@ -10,11 +10,11 @@ public class RedisCacheUsersRepository : IUsersRepository
 {
     private readonly IDistributedCache _cache;
     private readonly IUsersRepository _originalRepository;
-    private readonly DbContext _dbContext;
+    private readonly MecheraDbContext _dbContext;
 
     public RedisCacheUsersRepository(IUsersRepository originalRepository, 
         IDistributedCache distributedCache,
-        DbContext dbContext)
+        MecheraDbContext dbContext)
     {
         _originalRepository = originalRepository;
         _cache = distributedCache;
