@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechera.Sec.Data", "Mechera.Sec.Data\Mechera.Sec.Data.csproj", "{079CAA1F-A785-4D8A-A71D-05E8F98FDAC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechera.Sec.Data", "Mechera.Sec.Data\Mechera.Sec.Data.csproj", "{079CAA1F-A785-4D8A-A71D-05E8F98FDAC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechera.Sec.Authorization", "Mechera.Sec.Authorization\Mechera.Sec.Authorization.csproj", "{3C8A0037-50CB-4A46-93F0-3CC27F64D072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechera.Sec.Authorization", "Mechera.Sec.Authorization\Mechera.Sec.Authorization.csproj", "{3C8A0037-50CB-4A46-93F0-3CC27F64D072}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechera.Sec.Authorization.Tests", "Mechera.Sec.Authorization.Tests\Mechera.Sec.Authorization.Tests.csproj", "{B360323D-6D14-4448-A6BA-C92CBB8DD98C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3C8A0037-50CB-4A46-93F0-3CC27F64D072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C8A0037-50CB-4A46-93F0-3CC27F64D072}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C8A0037-50CB-4A46-93F0-3CC27F64D072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B360323D-6D14-4448-A6BA-C92CBB8DD98C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B360323D-6D14-4448-A6BA-C92CBB8DD98C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B360323D-6D14-4448-A6BA-C92CBB8DD98C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B360323D-6D14-4448-A6BA-C92CBB8DD98C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
