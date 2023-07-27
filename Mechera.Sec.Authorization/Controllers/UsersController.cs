@@ -32,9 +32,7 @@ public class UsersController : ControllerBase
 
         if (targetUser == null) return Unauthorized();        
 
-        var jwt = _jwtGenerator.GenerateToken(targetUser);
-
-        return Redirect(redirectOnSuccess + $"jwt={jwt}");
+        return Ok(_jwtGenerator.GenerateToken(targetUser));       
     }
 
     /// <summary>
