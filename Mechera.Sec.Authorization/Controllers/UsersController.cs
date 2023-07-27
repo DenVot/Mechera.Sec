@@ -25,8 +25,7 @@ public class UsersController : ControllerBase
     /// <param name="auth">Аунтефикационные параметры</param>    
     [HttpPost("login")]
     public async Task<IActionResult> Login(
-        [FromBody] AuthEntity auth, 
-        [FromQuery] string redirectOnSuccess)
+        [FromBody] AuthEntity auth)
     { 
         var targetUser = await _userAuthenticator.AuthenticateAsync(auth.Username, auth.Password);
 
