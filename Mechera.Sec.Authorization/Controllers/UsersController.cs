@@ -1,6 +1,5 @@
 ﻿using Mechera.Sec.Authorization.Entities;
 using Mechera.Sec.Authorization.Tools;
-using Mechera.Sec.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
