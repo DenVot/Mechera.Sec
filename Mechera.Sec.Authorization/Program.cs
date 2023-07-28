@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMecheraSecData(builder.Configuration)
     .AddScoped<IUserAuthenticator, UserAuthenticator>()
+    .AddScoped<IUserManager, UserManager>()
     .AddSingleton<IJwtGenerator, JwtGenerator>()
     .AddHostedService<DataSetupService>()
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -36,7 +37,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options => {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    });
 }
 
 app.UseHttpsRedirection();

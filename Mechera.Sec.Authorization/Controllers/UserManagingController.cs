@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mechera.Sec.Authorization.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Root")]
+//[Authorize(Roles = "Root")]
 [Route("/api/users/")]
 public class UserManagingController : ControllerBase
 {
@@ -15,8 +15,12 @@ public class UserManagingController : ControllerBase
     public UserManagingController(IUserManager userManager)
     {
         _userManager = userManager;
-    }   
-    
+    }
+
+    [HttpGet]
+    public IActionResult GetAllUsers() => 
+        Ok(_userManager.GetUsers().Select(UserInfoEntity.Create));
+
     [HttpPost("create")]
     public async Task<IActionResult> CreateNewUser([FromBody] AuthEntity authData)
     {

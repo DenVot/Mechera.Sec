@@ -8,6 +8,11 @@ namespace Mechera.Sec.Authorization.Tools;
 public interface IUserManager
 {
     /// <summary>
+    /// Получает всех пользователей
+    /// </summary>    
+    public IEnumerable<User> GetUsers();
+
+    /// <summary>
     /// Создает нового пользователя
     /// </summary>
     /// <param name="username">Имя</param>

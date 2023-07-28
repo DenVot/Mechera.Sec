@@ -27,6 +27,11 @@ public interface IUsersRepository
     Task RemoveAsync(User entity);
 
     /// <summary>
+    /// Получает всех пользователей
+    /// </summary>    
+    IQueryable<User> GetAll();
+
+    /// <summary>
     /// Сохраняет изменения
     /// </summary>
     /// <returns></returns>

@@ -25,6 +25,11 @@ public class EfUsersRepository : IUsersRepository, IDisposable
         _dbContext.Dispose();
     }
 
+    public IQueryable<User> GetAll()
+    {
+        return _dbContext.Users;
+    }
+
     /// <inheritdoc/>    
     public Task<User?> GetAsync(string username) => _users.FindAsync(username).AsTask();
 
@@ -34,7 +39,7 @@ public class EfUsersRepository : IUsersRepository, IDisposable
         _users.Remove(entity);
 
         return Task.CompletedTask;
-    }
+    }   
 
     /// <inheritdoc/>    
     public Task SaveChangesAsync() => _dbContext.SaveChangesAsync();

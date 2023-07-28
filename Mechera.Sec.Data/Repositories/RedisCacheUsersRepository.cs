@@ -33,6 +33,8 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
         _dbContext.Dispose();        
     }
 
+    public IQueryable<User> GetAll() => _originalRepository.GetAll();   
+
     public async Task<User?> GetAsync(string username)
     {
         var cachedResult = await _cache.GetAsync(username);

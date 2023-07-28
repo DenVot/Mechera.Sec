@@ -24,8 +24,8 @@ public class JwtGenerator : IJwtGenerator
 
     public string GenerateToken(User user)
     {
-        var usernameClaim = new Claim("username", user.Username);
-        var roleClaim = new Claim("role", user.IsRoot ? "Root" : "Basic");
+        var usernameClaim = new Claim(ClaimTypes.Name, user.Username);
+        var roleClaim = new Claim(ClaimTypes.Role, user.IsRoot ? "Root" : "Basic");
         var token = GenerateDefaultToken(new[] { usernameClaim, roleClaim });
         
         return _jwtHandler.WriteToken(token);
