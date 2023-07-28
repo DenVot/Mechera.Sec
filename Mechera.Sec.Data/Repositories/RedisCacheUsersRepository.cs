@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Mechera.Sec.Data.Repositories;
 
-public class RedisCacheUsersRepository : IUsersRepository
+public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 {
     private readonly IDistributedCache _cache;
     private readonly IUsersRepository _originalRepository;
@@ -25,6 +25,12 @@ public class RedisCacheUsersRepository : IUsersRepository
     {
         await LoadEntityToCacheAsync(entity);
         await _originalRepository.AddAsync(entity);
+    }
+
+    public void Dispose()
+    {
+        if (_originalRepository is IDisposable disposableRepo) disposableRepo.Dispose();
+        _dbContext.Dispose();        
     }
 
     public async Task<User?> GetAsync(string username)

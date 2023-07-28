@@ -1,3 +1,4 @@
+using Mechera.Sec.Authorization;
 using Mechera.Sec.Authorization.Tools;
 using Mechera.Sec.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMecheraSecData(builder.Configuration)
     .AddScoped<IUserAuthenticator, UserAuthenticator>()
     .AddSingleton<IJwtGenerator, JwtGenerator>()
+    .AddHostedService<DataSetupService>()
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

@@ -6,7 +6,7 @@ namespace Mechera.Sec.Data.Repositories;
 /// <summary>
 /// Реализация <see cref="IUsersRepository"/> с помощью EF Core
 /// </summary>
-public class EfUsersRepository : IUsersRepository
+public class EfUsersRepository : IUsersRepository, IDisposable
 {
     private readonly DbSet<User> _users;
     private readonly MecheraDbContext _dbContext;
@@ -19,6 +19,11 @@ public class EfUsersRepository : IUsersRepository
 
     /// <inheritdoc/>    
     public Task AddAsync(User entity) => _users.AddAsync(entity).AsTask();
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
+    }
 
     /// <inheritdoc/>    
     public Task<User?> GetAsync(string username) => _users.FindAsync(username).AsTask();
