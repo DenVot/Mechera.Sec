@@ -1,5 +1,4 @@
 ﻿using Mechera.Sec.Data.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text;
 using System.Text.Json;
@@ -90,4 +89,3 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
         await _cache.SetAsync(user.Username, jsonBytes);        
     }
 }
-
