@@ -1,6 +1,6 @@
 import { createUseStyles } from 'react-jss'
 
-export const defStyles = createUseStyles({
+export const useDefStyles = createUseStyles({
     brandBackground: {
         background: "#0C464E"
     }
