@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mechera.Sec.Authorization.Controllers;
 
 [ApiController]
-//[Authorize(Roles = "Root")]
+[Authorize(Roles = "Root")]
 [Route("/api/users/")]
 public class UserManagingController : ControllerBase
 {

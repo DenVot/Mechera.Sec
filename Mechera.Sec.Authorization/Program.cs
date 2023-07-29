@@ -15,19 +15,22 @@ builder.Services.AddMecheraSecData(builder.Configuration)
     .AddScoped<IUserAuthenticator, UserAuthenticator>()
     .AddScoped<IUserManager, UserManager>()
     .AddSingleton<IJwtGenerator, JwtGenerator>()
-    .AddHostedService<DataSetupService>()
+    .AddHostedService<DataSetupService>();
+
+builder.Services.AddAuthorization()    
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         var config = builder.Configuration;
 
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateAudience = false,
             ValidateLifetime = true,
-            ValidIssuer = config["Jwt:Issuer"],
-            ValidAudience = config["Jwt:Audience"],
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = config["Jwt:Issuer"],            
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!))
         };
     });
