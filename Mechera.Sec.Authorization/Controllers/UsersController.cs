@@ -2,6 +2,7 @@
 using Mechera.Sec.Authorization.Tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Mechera.Sec.Authorization.Controllers;
 
@@ -40,8 +41,8 @@ public class UsersController : ControllerBase
     [HttpGet("verify")]
     public async Task<IActionResult> VerifyToken()
     {
-        var usernameClaim = User.FindFirst("username");
-        var roleClaim = User.FindFirst("role");
+        var usernameClaim = User.FindFirst(ClaimTypes.Name);
+        var roleClaim = User.FindFirst(ClaimTypes.Role);
 
         if (usernameClaim == null || 
             roleClaim == null ||
