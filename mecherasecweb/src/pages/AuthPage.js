@@ -4,7 +4,7 @@ import { useDefStyles } from '../globalStyles';
 import Logo from "../images/logotype.png";
 import { useState } from 'react';
 import Swal from 'sweetalert2-neutral';
-import { Navigate, useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const useAuthPageStyles = createUseStyles({
     formStyle: {
@@ -31,11 +31,8 @@ export function AuthPage() {
     const style = useAuthPageStyles();
     const defStyle = useDefStyles();
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [jwt, setJwt] = useState("");
-    const [redirect, setRedirectState] = useState(false);
-    const [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
+    const [password, setPassword] = useState("");    
+    const [searchParams] = useSearchParams();    
 
     async function processResponse(response) {
         if (!response.ok) {
