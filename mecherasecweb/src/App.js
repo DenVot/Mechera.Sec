@@ -11,7 +11,7 @@ function App() {
     return <Router>
         <Routes>
             <Route path="/login" element={<AuthPage />} />
-            <Route path="/users-managing" element={UserManagingPage}/>
+            <Route path="/users-managing" element={<UserManagingPage/>}/>
         </Routes>
     </Router>
 }
