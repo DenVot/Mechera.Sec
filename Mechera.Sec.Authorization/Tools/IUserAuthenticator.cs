@@ -5,5 +5,4 @@ namespace Mechera.Sec.Authorization.Tools;
 public interface IUserAuthenticator
 {
     Task<User?> AuthenticateAsync(string username, string password);
-    Task<bool> CheckIfUserExistsAsync(string username);
 }

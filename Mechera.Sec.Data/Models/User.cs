@@ -7,4 +7,6 @@ public partial class User
     public byte[] PasswordHash { get; set; } = null!;
 
     public bool IsRoot { get; set; }
+
+    public long Id { get; set; }
 }

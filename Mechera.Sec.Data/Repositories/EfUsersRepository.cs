@@ -31,7 +31,9 @@ public class EfUsersRepository : IUsersRepository, IDisposable
     }
 
     /// <inheritdoc/>    
-    public Task<User?> GetAsync(string username) => _users.FindAsync(username).AsTask();
+    public Task<User?> GetAsync(string username) => 
+        _users.Where(user => user.Username == username)
+            .FirstOrDefaultAsync();
 
     /// <inheritdoc/>    
     public Task RemoveAsync(User entity)
