@@ -36,15 +36,15 @@ public class UserManager : IUserManager
 
     public IEnumerable<User> GetUsers() => _usersRepository.GetAll();
 
-    public async Task RemoveUserAsync(string username)
+    public async Task RemoveUserAsync(long id)
     {       
-        await _usersRepository.RemoveAsync(new User { Username = username });
+        await _usersRepository.RemoveAsync(new User { Id = id });
         await _usersRepository.SaveChangesAsync();
     }
 
-    public async Task UpdatePasswordAsync(string username, string newPassword)
+    public async Task UpdatePasswordAsync(long id, string newPassword)
     { 
-        var targetUser = await _usersRepository.GetAsync(username);
+        var targetUser = await _usersRepository.GetAsync(id);
 
         ArgumentNullException.ThrowIfNull(targetUser);
 

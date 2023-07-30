@@ -23,11 +23,11 @@ public interface IUserManager
     /// Обновляет пароль пользователя
     /// </summary>
     /// <param name="newPassword">Новый пароль</param>   
-    public Task UpdatePasswordAsync(string username, string newPassword);
+    public Task UpdatePasswordAsync(long id, string newPassword);
 
     /// <summary>
     /// Удаляет пользователя
     /// </summary>
-    /// <param name="username">Имя пользователя</param>    
-    public Task RemoveUserAsync(string username);
+    /// <param name="id">ID пользователя</param>    
+    public Task RemoveUserAsync(long id);
 }
