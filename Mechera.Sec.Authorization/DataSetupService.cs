@@ -25,7 +25,7 @@ public class DataSetupService : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var usersRepository = scope.ServiceProvider.GetRequiredService<IUsersRepository>();
-        var rootUser = await usersRepository.GetAsync(RootUsername);
+        var rootUser = await usersRepository.GetUserByUsernameAsync(RootUsername);
 
         if (rootUser != null && rootUser.IsRoot) 
         {

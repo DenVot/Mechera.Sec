@@ -16,7 +16,7 @@ public class UserManager : IUserManager
 
     public async Task<User?> CreateUserAsync(string username, string password)
     {
-        if (await _usersRepository.GetAsync(username) != null)
+        if (await _usersRepository.GetUserByUsernameAsync(username) != null)
         {
             return null;
         }
