@@ -1,5 +1,5 @@
 import { createUseStyles } from 'react-jss'
-import { Button, Form, Input } from 'reactstrap';
+import { Button, Form, Input } from 'react-bootstrap';
 import { useDefStyles } from '../globalStyles';
 import Logo from "../images/logotype.png";
 import { useState } from 'react';
@@ -31,8 +31,8 @@ export function AuthPage() {
     const style = useAuthPageStyles();
     const defStyle = useDefStyles();
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");    
-    const [searchParams] = useSearchParams();    
+    const [password, setPassword] = useState("");
+    const [searchParams] = useSearchParams();
 
     async function processResponse(response) {
         if (!response.ok) {
@@ -66,8 +66,8 @@ export function AuthPage() {
             <img src={Logo} alt="LOGO" width={64} />
         </div>
         <div className="d-flex flex-column gap-1">
-            <Input onChange={(e) => setUsername(e.target.value)} id="login-input" type="text" placeholder="Логин" />
-            <Input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Пароль" />
+            <Form.Control onChange={(e) => setUsername(e.target.value)} id="login-input" type="text" placeholder="Логин" />
+            <Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Пароль" />
         </div>
         <Button type="submit" className={defStyle.brandBackground}>Войти</Button>
     </Form>

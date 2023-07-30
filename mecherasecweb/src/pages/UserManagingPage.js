@@ -1,26 +1,38 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2-neutral";
+import { Stack } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const FAIL_TO_GET_INVOKER_STATUS = "FAIL_TO_GET_INVOKER";
 const BAD_INVOKER_ROLE_STATUS = "BAD_INVOKER_ROLE";
+const INVOKER_OK_STATUS = "INVOKER_OK";
 
 export function UserManagingPage() {
     const [invoker, setInvoker] = useState(null);
     const [users, setUsers] = useState(null);
-    
+    const [jwt, setJwt] = useState(null);
+    const [searchParams] = useSearchParams();
+
     // Валидация токена
     useEffect(() => {
         (async () => {
-            const tokenFromStorage = localStorage.getItem("jwt");
+            const tokenFromQuery = searchParams.get("jwt")
+            let token = localStorage.getItem("jwt");
+
+            if (tokenFromQuery) {
+                token = tokenFromQuery;
+                localStorage.setItem("jwt", tokenFromQuery);
+            }
 
             const verifyResult = await fetch("/api/auth/verify", {
                 method: "GET",
                 headers: {
-                    "Authorization": `Bearer ${tokenFromStorage}`
+                    "Authorization": `Bearer ${token}`
                 }
             });
 
+            console.log(verifyResult);
             if (!verifyResult.ok) {
                 setInvoker(FAIL_TO_GET_INVOKER_STATUS);
                 return;
@@ -33,16 +45,21 @@ export function UserManagingPage() {
                 return;
             }
 
-            setInvoker(responseObj);
+            setJwt(token);
+            setInvoker(INVOKER_OK_STATUS);
+
+            const responseResult = await fetch("/api/users", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            setUsers(await responseResult.json());
         })();
     }, []);
 
-    // Загрузка пользователей
-    useEffect(() => {
-        
-    }, []);
-
-    if (invoker == null || users == null) {
+    if (invoker == null && users == null) {
         return <span>Загрузка..</span>
     }
 
@@ -62,9 +79,33 @@ export function UserManagingPage() {
         }).then(() => redirectToAuth());
     }
 
-    return <></>
+    console.log(users);
+
+    return <UsersList users={users} />;
 }
 
 function redirectToAuth() {
-    window.location.replace(`${window.location.host}/login?redirectTo=${window.location.href}`);
+    window.location.replace(`/login?redirectTo=${window.location.href}`);
+}
+
+function UsersList({ users }) {
+    return <div>
+        <div>
+            <span>Пользователи</span>
+        </div>
+        <Stack>
+            {users.map(user => <UserContainer user={user} />)}
+        </Stack>
+    </div>
+}
+
+function UserContainer({ user }) {
+    return <Stack direction="horizontal">
+        <span>{user.username}</span>
+        <div>
+            <FontAwesomeIcon icon="fa-solid fa-lock" />
+            <FontAwesomeIcon icon="fa-solid fa-pen" />
+            <FontAwesomeIcon icon="fa-solid fa-trash" />
+        </div>
+    </Stack>
 }
