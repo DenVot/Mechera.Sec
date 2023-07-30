@@ -1,5 +1,6 @@
 ﻿using Mechera.Sec.Authorization.Entities;
 using Mechera.Sec.Authorization.Tools;
+using Mechera.Sec.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,12 @@ namespace Mechera.Sec.Authorization.Controllers;
 public class UserManagingController : ControllerBase
 {
     private readonly IUserManager _userManager;
+    private readonly IUsersRepository _usersRepository;
 
-    public UserManagingController(IUserManager userManager)
+    public UserManagingController(IUserManager userManager, IUsersRepository usersRepository)
     {
         _userManager = userManager;
+        _usersRepository = usersRepository;
     }
 
     [HttpGet]
@@ -32,13 +35,16 @@ public class UserManagingController : ControllerBase
     }
 
     [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteUser([FromQuery] string username)
+    public async Task<IActionResult> DeleteUser([FromQuery] long id)
     {
-        if (username == "Root") return BadRequest("Can't remove the root user");
+        var targetUser = await _usersRepository.GetAsync(id);
+
+        if (targetUser == null) return BadRequest();
+        if (targetUser.Username == "Root") return BadRequest();
 
         try
         {
-            await _userManager.RemoveUserAsync(username);
+            await _userManager.RemoveUserAsync(id);
 
             return Ok();
         }
