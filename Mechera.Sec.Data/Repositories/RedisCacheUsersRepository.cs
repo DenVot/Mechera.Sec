@@ -34,15 +34,15 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 
     public IQueryable<User> GetAll() => _originalRepository.GetAll();   
 
-    public async Task<User?> GetAsync(string username)
+    public async Task<User?> GetAsync(long id)
     {
-        var cachedResult = await _cache.GetAsync(username);
+        var cachedResult = await _cache.GetAsync(id.ToString());
 
         User target;
 
         if (cachedResult == null)
         {
-            var resultFromOriginal = await _originalRepository.GetAsync(username);
+            var resultFromOriginal = await _originalRepository.GetAsync(id);
 
             if (resultFromOriginal == null) return null;
 
@@ -63,7 +63,7 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
     {
         if (await _cache.GetAsync(entity.Username) != null)
         {
-            await _cache.RemoveAsync(entity.Username);
+            await RemoveEntityFromCacheAsync(entity); 
         }
 
         await _originalRepository.RemoveAsync(entity);
@@ -86,6 +86,13 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
     {
         var jsonBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(user));
 
-        await _cache.SetAsync(user.Username, jsonBytes);        
+        await _cache.SetAsync(user.Id.ToString(), jsonBytes);
+        await _cache.SetAsync(user.Username, jsonBytes);
+    }
+
+    private async Task RemoveEntityFromCacheAsync(User user)
+    {
+        await _cache.RemoveAsync(user.Username);
+        await _cache.RemoveAsync(user.Id.ToString());
     }
 }
