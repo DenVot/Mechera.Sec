@@ -43,7 +43,7 @@ public class UserManagingController : ControllerBase
 
             return Ok();
         }
-        catch (Exception)
+        catch (Exception e)
         {
             return BadRequest("Invalid data");
         }

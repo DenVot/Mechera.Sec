@@ -22,6 +22,7 @@ public class UsersController : ControllerBase
         _usersRepository = usersRepository;
         _jwtGenerator = jwtGenerator;
         _userAuthenticator = userAuthenticator;
+        _usersRepository = usersRepository;
     }
 
     /// <summary>

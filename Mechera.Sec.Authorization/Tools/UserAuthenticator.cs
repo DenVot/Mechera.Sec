@@ -30,7 +30,7 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
         }
 
         return targetUser;
-    }
+    } 
 
     public void Dispose()
     {
