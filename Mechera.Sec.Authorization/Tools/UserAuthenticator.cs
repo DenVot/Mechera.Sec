@@ -32,9 +32,9 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
         return targetUser;
     }
 
-    public async Task<bool> CheckIfUserExistsAsync(string username)
+    public async Task<bool> CheckIfUserExistsAsync(long id)
     {
-        var targetUser = await _usersRepository.GetAsync(username);
+        var targetUser = await _usersRepository.GetAsync(id);
 
         return targetUser != null;
     }   
