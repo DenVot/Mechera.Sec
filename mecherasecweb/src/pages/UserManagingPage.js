@@ -128,7 +128,7 @@ function UsersList({ users }) {
 
     function handleDeleteUser(user) {
         usersList.slice(usersList.indexOf(user), 1)
-        setUsers([...usersList]);
+        setUsers(usersList.filter(checkingUser => checkingUser !== user));
     }
 
     return <div className={styles.usersContainer}>
@@ -136,7 +136,7 @@ function UsersList({ users }) {
             <span>Пользователи</span>
         </div>
         <Stack gap={1} direction="vertical" className="p-3">
-            {usersList.map(user => <UserContainer key={user.username} onDeleteUser={handleDeleteUser} user={user} />)}
+            {usersList.map(user => <UserContainer key={user.id} onDeleteUser={handleDeleteUser} user={user} />)}
         </Stack>
     </div>
 }
@@ -163,7 +163,7 @@ function UserContainer({ user, onDeleteUser }) {
             const response = await fetch("/api/users/update-password", {
                 method: "PUT",
                 body: JSON.stringify({
-                    username: user.username,
+                    id: user.id,
                     password: result.value
                 }),
                 headers: {
@@ -191,7 +191,7 @@ function UserContainer({ user, onDeleteUser }) {
     }
 
     async function handleDeleteUser() {
-        const result = await fetch(`/api/users/delete?username=${user.username}`, {
+        const result = await fetch(`/api/users/delete?id=${user.id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${jwt}`
