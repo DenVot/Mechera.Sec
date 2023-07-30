@@ -41,16 +41,16 @@ public class UsersController : ControllerBase
     [HttpGet("verify")]
     public async Task<IActionResult> VerifyToken()
     {
-        var usernameClaim = User.FindFirst(ClaimTypes.Name);
+        var nameClaim = User.FindFirst(ClaimTypes.Name);
         var roleClaim = User.FindFirst(ClaimTypes.Role);
 
-        if (usernameClaim == null || 
+        if (nameClaim == null || 
             roleClaim == null ||
-            !await _userAuthenticator.CheckIfUserExistsAsync(usernameClaim.Value))
+            !await _userAuthenticator.CheckIfUserExistsAsync(long.Parse(nameClaim.Value)))
         {
             return Unauthorized();
         }
 
-        return Ok(new UserInfoEntity(usernameClaim.Value, roleClaim.Value));
+        return Ok(new UserInfoEntity(nameClaim.Value, roleClaim.Value));
     }
 }

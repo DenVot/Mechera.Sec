@@ -16,7 +16,7 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
         _passwordHasher = SHA256.Create();
     }
 
-    public async Task<User?> AuthenticateAsync(string username, string password)
+    public async Task<User?> AuthenticateAsync(long username, string password)
     {
         var targetUser = await _usersRepository.GetAsync(username);
         if (targetUser == null) return null;
