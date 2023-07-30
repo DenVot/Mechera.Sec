@@ -1,5 +1,6 @@
 ﻿using Mechera.Sec.Authorization.Entities;
 using Mechera.Sec.Authorization.Tools;
+using Mechera.Sec.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,9 +13,13 @@ public class UsersController : ControllerBase
 {
     private readonly IJwtGenerator _jwtGenerator;
     private readonly IUserAuthenticator _userAuthenticator;
+    private readonly IUsersRepository _usersRepository;
 
-    public UsersController(IJwtGenerator jwtGenerator, IUserAuthenticator userAuthenticator)
+    public UsersController(IJwtGenerator jwtGenerator, 
+        IUserAuthenticator userAuthenticator,
+        IUsersRepository usersRepository)
     {
+        _usersRepository = usersRepository;
         _jwtGenerator = jwtGenerator;
         _userAuthenticator = userAuthenticator;
     }
@@ -45,12 +50,15 @@ public class UsersController : ControllerBase
         var roleClaim = User.FindFirst(ClaimTypes.Role);
 
         if (nameClaim == null || 
-            roleClaim == null ||
-            !await _userAuthenticator.CheckIfUserExistsAsync(long.Parse(nameClaim.Value)))
+            roleClaim == null)
         {
             return Unauthorized();
         }
 
-        return Ok(new UserInfoEntity(nameClaim.Value, roleClaim.Value));
+        var targetUser = await _usersRepository.GetAsync(long.Parse(nameClaim.Value));
+
+        if (targetUser == null) return Unauthorized();
+
+        return Ok(new UserInfoEntity(targetUser.Id, targetUser.Username, roleClaim.Value));
     }
 }

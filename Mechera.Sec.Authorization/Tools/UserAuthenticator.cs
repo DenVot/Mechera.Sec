@@ -16,9 +16,9 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
         _passwordHasher = SHA256.Create();
     }
 
-    public async Task<User?> AuthenticateAsync(long username, string password)
+    public async Task<User?> AuthenticateAsync(string username, string password)
     {
-        var targetUser = await _usersRepository.GetAsync(username);
+        var targetUser = await _usersRepository.GetUserByUsernameAsync(username);
         if (targetUser == null) return null;
 
         var targetHash = targetUser.PasswordHash;
@@ -31,13 +31,6 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
 
         return targetUser;
     }
-
-    public async Task<bool> CheckIfUserExistsAsync(long id)
-    {
-        var targetUser = await _usersRepository.GetAsync(id);
-
-        return targetUser != null;
-    }   
 
     public void Dispose()
     {
