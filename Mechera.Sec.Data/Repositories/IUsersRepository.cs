@@ -21,6 +21,13 @@ public interface IUsersRepository
     Task<User?> GetAsync(long id);
 
     /// <summary>
+    /// Получает пользователя по имени
+    /// </summary>
+    /// <param name="username">Имя</param>
+    /// <returns>Null, если пользователь не найден, иначе значение</returns>
+    Task<User?> GetUserByUsernameAsync(string username);
+
+    /// <summary>
     /// Удаляет пользователя
     /// </summary>
     /// <param name="entity">Сущность</param>  

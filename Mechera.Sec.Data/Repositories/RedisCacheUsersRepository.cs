@@ -34,15 +34,22 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 
     public IQueryable<User> GetAll() => _originalRepository.GetAll();   
 
-    public async Task<User?> GetAsync(long id)
+    public Task<User?> GetAsync(long id) =>
+        GetUserByIdentifierAsync(id.ToString(), 
+            (identifier) => _originalRepository.GetAsync(long.Parse(identifier)));
+
+    public Task<User?> GetUserByUsernameAsync(string username) => 
+        GetUserByIdentifierAsync(username, _originalRepository.GetUserByUsernameAsync);
+
+    private async Task<User?> GetUserByIdentifierAsync(string identifier, Func<string, Task<User?>> getUserFromOriginal)
     {
-        var cachedResult = await _cache.GetAsync(id.ToString());
+        var cachedResult = await _cache.GetAsync(identifier);
 
         User target;
 
         if (cachedResult == null)
         {
-            var resultFromOriginal = await _originalRepository.GetAsync(id);
+            var resultFromOriginal = await getUserFromOriginal(identifier);
 
             if (resultFromOriginal == null) return null;
 
