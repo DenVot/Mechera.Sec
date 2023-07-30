@@ -11,10 +11,8 @@ const INVOKER_OK_STATUS = "INVOKER_OK";
 export function UserManagingPage() {
     const [invoker, setInvoker] = useState(null);
     const [users, setUsers] = useState(null);
-    const [jwt, setJwt] = useState(null);
     const [searchParams] = useSearchParams();
 
-    // Валидация токена
     useEffect(() => {
         (async () => {
             const tokenFromQuery = searchParams.get("jwt")
@@ -32,7 +30,6 @@ export function UserManagingPage() {
                 }
             });
 
-            console.log(verifyResult);
             if (!verifyResult.ok) {
                 setInvoker(FAIL_TO_GET_INVOKER_STATUS);
                 return;
@@ -45,7 +42,6 @@ export function UserManagingPage() {
                 return;
             }
 
-            setJwt(token);
             setInvoker(INVOKER_OK_STATUS);
 
             const responseResult = await fetch("/api/users", {
@@ -59,11 +55,11 @@ export function UserManagingPage() {
         })();
     }, []);
 
-    if (invoker == null && users == null) {
-        return <span>Загрузка..</span>
+    if (invoker === null) {
+        return <span>Авторизация..</span>
     }
 
-    if (invoker == FAIL_TO_GET_INVOKER_STATUS) {
+    if (invoker === FAIL_TO_GET_INVOKER_STATUS) {
         redirectToAuth();
         Swal.fire({
             title: "Необходима авторизация",
@@ -71,7 +67,7 @@ export function UserManagingPage() {
         }).then(() => redirectToAuth());
     }
 
-    if (invoker == BAD_INVOKER_ROLE_STATUS) {
+    if (invoker === BAD_INVOKER_ROLE_STATUS) {
         redirectToAuth();
         Swal.fire({
             title: "У Вас нет прав доступа к этой странице",
@@ -79,7 +75,9 @@ export function UserManagingPage() {
         }).then(() => redirectToAuth());
     }
 
-    console.log(users);
+    if (users === null) {
+        return <span>Загрузка пользователей...</span>
+    }
 
     return <UsersList users={users} />;
 }
