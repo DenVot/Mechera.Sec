@@ -34,7 +34,7 @@ public class EfUsersRepository : IUsersRepository, IDisposable
     public Task<User?> GetAsync(long id) => _users.FindAsync(id).AsTask();
 
     public Task<User?> GetUserByUsernameAsync(string username) => 
-        _dbContext.Users.FromSqlRaw($"SELECT * FROM users WHERE username = '{username}'").FirstOrDefaultAsync();
+        _dbContext.Users.FromSqlRaw($"SELECT * FROM user WHERE username = '{username}'").FirstOrDefaultAsync();
 
     /// <inheritdoc/>    
     public Task RemoveAsync(User entity)
