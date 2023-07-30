@@ -55,11 +55,11 @@ public class UserManagingController : ControllerBase
     }
 
     [HttpPut("update-password")]
-    public async Task<IActionResult> UpdatePassword([FromBody] AuthEntity authData)
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordEntity updatePasswordData)
     {
         try
         {
-            await _userManager.UpdatePasswordAsync(authData.Username, authData.Password);
+            await _userManager.UpdatePasswordAsync(updatePasswordData.Id, updatePasswordData.Password);
 
             return Ok();
         }
