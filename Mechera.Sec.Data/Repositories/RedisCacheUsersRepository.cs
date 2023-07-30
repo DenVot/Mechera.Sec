@@ -21,9 +21,8 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
     }    
 
     public async Task AddAsync(User entity)
-    {
-        await LoadEntityToCacheAsync(entity);
-        await _originalRepository.AddAsync(entity);
+    {        
+        await _originalRepository.AddAsync(entity);        
     }
 
     public void Dispose()
@@ -68,20 +67,28 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 
     public async Task RemoveAsync(User entity)
     {
-        if (await _cache.GetAsync(entity.Username) != null)
+        var jsonBytes = await _cache.GetAsync(entity.Id.ToString());
+
+        if (jsonBytes != null)
         {
-            await RemoveEntityFromCacheAsync(entity); 
+            var cachedUser = JsonSerializer.Deserialize<User>(jsonBytes);
+
+            if (cachedUser!.Username != null)
+            {
+                await RemoveEntityFromCacheAsync(cachedUser!);
+            }            
         }
 
         await _originalRepository.RemoveAsync(entity);
     }
 
     public async Task SaveChangesAsync()
-    {
-        if(_dbContext.ChangeTracker.HasChanges())
+    {       
+        if (_dbContext.ChangeTracker.HasChanges())
         {
             foreach(var userEntry in _dbContext.ChangeTracker.Entries<User>())
-            {                
+            {
+                if (userEntry.Entity.Username == null) continue;
                 await LoadEntityToCacheAsync(userEntry.Entity);
             }
         }

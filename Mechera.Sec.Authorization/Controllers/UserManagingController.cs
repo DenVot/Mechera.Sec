@@ -36,12 +36,7 @@ public class UserManagingController : ControllerBase
 
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteUser([FromQuery] long id)
-    {
-        var targetUser = await _usersRepository.GetAsync(id);
-
-        if (targetUser == null) return BadRequest();
-        if (targetUser.Username == "Root") return BadRequest();
-
+    {        
         try
         {
             await _userManager.RemoveUserAsync(id);
