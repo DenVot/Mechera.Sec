@@ -46,7 +46,8 @@ public class DataSetupService : IHostedService
         rootUser = new User
         {
             Username = RootUsername,
-            PasswordHash = RootDefPasswordHash
+            PasswordHash = RootDefPasswordHash,
+            IsRoot = true
         };
 
         await usersRepository.AddAsync(rootUser);

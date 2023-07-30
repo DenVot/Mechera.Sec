@@ -22,8 +22,8 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 
     public async Task AddAsync(User entity)
     {
-        await LoadEntityToCacheAsync(entity);
         await _originalRepository.AddAsync(entity);
+        await LoadEntityToCacheAsync(entity);        
     }
 
     public void Dispose()

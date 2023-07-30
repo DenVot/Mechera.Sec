@@ -37,7 +37,7 @@ public class UserManager : IUserManager
     public IEnumerable<User> GetUsers() => _usersRepository.GetAll();
 
     public async Task RemoveUserAsync(string username)
-    {       
+    {               
         await _usersRepository.RemoveAsync(new User { Username = username });
         await _usersRepository.SaveChangesAsync();
     }
