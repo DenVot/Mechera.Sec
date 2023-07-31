@@ -31,7 +31,7 @@ public class UserManagingController : ControllerBase
 
         if (user == null) return BadRequest("Invalid auth data");
 
-        return Ok();
+        return Ok(UserInfoEntity.Create(user));
     }
 
     [HttpDelete("delete")]
