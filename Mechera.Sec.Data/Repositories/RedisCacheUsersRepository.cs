@@ -5,6 +5,11 @@ using System.Text.Json;
 
 namespace Mechera.Sec.Data.Repositories;
 
+/*
+ Структура кэша:
+    ID -> JSON пользователя
+    Username -> ID пользователя, по которому можно найти его
+ */
 public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 {
     private readonly IDistributedCache _cache;
@@ -22,7 +27,7 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 
     public async Task AddAsync(User entity)
     {        
-        await _originalRepository.AddAsync(entity);        
+        await _originalRepository.AddAsync(entity);
     }
 
     public void Dispose()
@@ -33,22 +38,15 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
 
     public IQueryable<User> GetAll() => _originalRepository.GetAll();   
 
-    public Task<User?> GetAsync(long id) =>
-        GetUserByIdentifierAsync(id.ToString(), 
-            (identifier) => _originalRepository.GetAsync(long.Parse(identifier)));
-
-    public Task<User?> GetUserByUsernameAsync(string username) => 
-        GetUserByIdentifierAsync(username, _originalRepository.GetUserByUsernameAsync);
-
-    private async Task<User?> GetUserByIdentifierAsync(string identifier, Func<string, Task<User?>> getUserFromOriginal)
+    public async Task<User?> GetAsync(long id)
     {
-        var cachedResult = await _cache.GetAsync(identifier);
+        var cachedResult = await _cache.GetAsync(id.ToString());
 
         User target;
 
         if (cachedResult == null)
         {
-            var resultFromOriginal = await getUserFromOriginal(identifier);
+            var resultFromOriginal = await _originalRepository.GetAsync(id);
 
             if (resultFromOriginal == null) return null;
 
@@ -65,6 +63,27 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
         return target;
     }
 
+    public async Task<User?> GetUserByUsernameAsync(string username)
+    {
+        var cachedIdBytes = await _cache.GetAsync(username); 
+
+        if (cachedIdBytes == null)
+        {
+            var resultFromOriginal = await _originalRepository.GetUserByUsernameAsync(username);
+            if (resultFromOriginal == null) return null;            
+
+            await LoadEntityToCacheAsync(resultFromOriginal);
+
+            return resultFromOriginal;
+        }
+        else 
+        { 
+            var cachedId = long.Parse(Encoding.UTF8.GetString(cachedIdBytes));
+
+            return await GetAsync(cachedId);
+        }
+    }
+
     public async Task RemoveAsync(User entity)
     {
         var jsonBytes = await _cache.GetAsync(entity.Id.ToString());
@@ -73,35 +92,21 @@ public class RedisCacheUsersRepository : IUsersRepository, IDisposable
         {
             var cachedUser = JsonSerializer.Deserialize<User>(jsonBytes);
 
-            if (cachedUser!.Username != null)
-            {
-                await RemoveEntityFromCacheAsync(cachedUser!);
-            }            
+            await RemoveEntityFromCacheAsync(cachedUser!);            
         }
 
         await _originalRepository.RemoveAsync(entity);
     }
 
-    public async Task SaveChangesAsync()
-    {       
-        if (_dbContext.ChangeTracker.HasChanges())
-        {
-            foreach(var userEntry in _dbContext.ChangeTracker.Entries<User>())
-            {
-                if (userEntry.Entity.Username == null) continue;
-                await LoadEntityToCacheAsync(userEntry.Entity);
-            }
-        }
-
-        await _originalRepository.SaveChangesAsync();
-    }
+    public Task SaveChangesAsync() => _originalRepository.SaveChangesAsync();
 
     private async Task LoadEntityToCacheAsync(User user)
     {
         var jsonBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(user));
+        var idBytes = Encoding.UTF8.GetBytes(user.Id.ToString());
 
         await _cache.SetAsync(user.Id.ToString(), jsonBytes);
-        await _cache.SetAsync(user.Username, jsonBytes);
+        await _cache.SetAsync(user.Username, idBytes);
     }
 
     private async Task RemoveEntityFromCacheAsync(User user)
