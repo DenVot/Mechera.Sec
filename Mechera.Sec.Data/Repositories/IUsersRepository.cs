@@ -14,17 +14,29 @@ public interface IUsersRepository
     Task AddAsync(User entity);
 
     /// <summary>
+    /// Получает пользователя по ID
+    /// </summary>
+    /// <param name="id">ID</param>
+    /// <returns>Null, если пользователь не найден, иначе значение</returns>
+    Task<User?> GetAsync(long id);
+
+    /// <summary>
     /// Получает пользователя по имени
     /// </summary>
     /// <param name="username">Имя</param>
     /// <returns>Null, если пользователь не найден, иначе значение</returns>
-    Task<User?> GetAsync(string username);
+    Task<User?> GetUserByUsernameAsync(string username);
 
     /// <summary>
     /// Удаляет пользователя
     /// </summary>
     /// <param name="entity">Сущность</param>  
     Task RemoveAsync(User entity);
+
+    /// <summary>
+    /// Получает всех пользователей
+    /// </summary>    
+    IQueryable<User> GetAll();
 
     /// <summary>
     /// Сохраняет изменения

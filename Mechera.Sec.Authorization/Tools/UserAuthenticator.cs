@@ -18,7 +18,7 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
 
     public async Task<User?> AuthenticateAsync(string username, string password)
     {
-        var targetUser = await _usersRepository.GetAsync(username);
+        var targetUser = await _usersRepository.GetUserByUsernameAsync(username);
         if (targetUser == null) return null;
 
         var targetHash = targetUser.PasswordHash;
@@ -30,14 +30,7 @@ public class UserAuthenticator : IUserAuthenticator, IDisposable
         }
 
         return targetUser;
-    }
-
-    public async Task<bool> CheckIfUserExistsAsync(string username)
-    {
-        var targetUser = await _usersRepository.GetAsync(username);
-
-        return targetUser != null;
-    }   
+    } 
 
     public void Dispose()
     {

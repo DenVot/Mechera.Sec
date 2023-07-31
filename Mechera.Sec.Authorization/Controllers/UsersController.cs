@@ -1,8 +1,9 @@
 ﻿using Mechera.Sec.Authorization.Entities;
 using Mechera.Sec.Authorization.Tools;
-using Mechera.Sec.Data.Models;
+using Mechera.Sec.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Mechera.Sec.Authorization.Controllers;
 
@@ -12,11 +13,16 @@ public class UsersController : ControllerBase
 {
     private readonly IJwtGenerator _jwtGenerator;
     private readonly IUserAuthenticator _userAuthenticator;
+    private readonly IUsersRepository _usersRepository;
 
-    public UsersController(IJwtGenerator jwtGenerator, IUserAuthenticator userAuthenticator)
+    public UsersController(IJwtGenerator jwtGenerator, 
+        IUserAuthenticator userAuthenticator,
+        IUsersRepository usersRepository)
     {
+        _usersRepository = usersRepository;
         _jwtGenerator = jwtGenerator;
         _userAuthenticator = userAuthenticator;
+        _usersRepository = usersRepository;
     }
 
     /// <summary>
@@ -25,16 +31,13 @@ public class UsersController : ControllerBase
     /// <param name="auth">Аунтефикационные параметры</param>    
     [HttpPost("login")]
     public async Task<IActionResult> Login(
-        [FromBody] AuthEntity auth, 
-        [FromQuery] string redirectOnSuccess)
+        [FromBody] AuthEntity auth)
     { 
         var targetUser = await _userAuthenticator.AuthenticateAsync(auth.Username, auth.Password);
 
         if (targetUser == null) return Unauthorized();        
 
-        var jwt = _jwtGenerator.GenerateToken(targetUser);
-
-        return Redirect(redirectOnSuccess + $"jwt={jwt}");
+        return Ok(_jwtGenerator.GenerateToken(targetUser));       
     }
 
     /// <summary>
@@ -44,16 +47,19 @@ public class UsersController : ControllerBase
     [HttpGet("verify")]
     public async Task<IActionResult> VerifyToken()
     {
-        var usernameClaim = User.FindFirst("username");
-        var roleClaim = User.FindFirst("role");
+        var nameClaim = User.FindFirst(ClaimTypes.Name);
+        var roleClaim = User.FindFirst(ClaimTypes.Role);
 
-        if (usernameClaim == null || 
-            roleClaim == null ||
-            !await _userAuthenticator.CheckIfUserExistsAsync(usernameClaim.Value))
+        if (nameClaim == null || 
+            roleClaim == null)
         {
             return Unauthorized();
         }
 
-        return Ok(new UserInfoEntity(usernameClaim.Value, roleClaim.Value));
+        var targetUser = await _usersRepository.GetAsync(long.Parse(nameClaim.Value));
+
+        if (targetUser == null) return Unauthorized();
+
+        return Ok(new UserInfoEntity(targetUser.Id, targetUser.Username, roleClaim.Value));
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mechera.Sec.Data.Models;
 
@@ -23,15 +25,13 @@ public partial class MecheraDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Username).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("user");
 
-            entity.Property(e => e.Username)
-                .HasMaxLength(128)
-                .HasColumnName("username")
-                .UseCollation("utf8mb3_general_ci")
-                .HasCharSet("utf8mb3");
+            entity.HasIndex(e => e.Username, "username_UNIQUE").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.IsRoot)
                 .HasDefaultValueSql("b'0'")
                 .HasColumnType("bit(1)")
@@ -40,6 +40,9 @@ public partial class MecheraDbContext : DbContext
                 .HasMaxLength(32)
                 .IsFixedLength()
                 .HasColumnName("password_hash");
+            entity.Property(e => e.Username)
+                .HasMaxLength(128)
+                .HasColumnName("username");
         });
 
         OnModelCreatingPartial(modelBuilder);

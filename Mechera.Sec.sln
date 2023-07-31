@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechera.Sec.Authorization",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechera.Sec.Authorization.Tests", "Mechera.Sec.Authorization.Tests\Mechera.Sec.Authorization.Tests.csproj", "{B360323D-6D14-4448-A6BA-C92CBB8DD98C}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "mecherasecweb", "MecheraSecWeb\mecherasecweb.esproj", "{52936918-A057-4DAD-A636-7540BD8D7A6B}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "mecherasecweb", "mecherasecweb\mecherasecweb.esproj", "{52936918-A057-4DAD-A636-7540BD8D7A6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
