@@ -18,6 +18,7 @@ public class JwtGenerator : IJwtGenerator
 #if DEBUG
         _jwtIssuer = configuration["Jwt:Issuer"];        
         _jwtLifetime = configuration.GetValue<int>("Jwt:Lifetime");
+        _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
 #else
         _jwtIssuer = EnvConfig.JwtIssuer;
 
@@ -27,8 +28,8 @@ public class JwtGenerator : IJwtGenerator
         }
 
         _jwtLifetime = EnvConfig.JwtLifetime.Value;
+        _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(EnvConfig.JwtKey!));
 #endif
-        _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
     }
 
     public string GenerateToken(User user)
