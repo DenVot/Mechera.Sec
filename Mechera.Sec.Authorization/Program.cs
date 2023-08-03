@@ -11,8 +11,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddMecheraSecData(builder.Configuration)
-    .AddScoped<IUserAuthenticator, UserAuthenticator>()
+#if DEBUG
+builder.Services.AddMecheraSecData(
+    builder.Configuration.GetConnectionString("MecheraSecDB")!, 
+    builder.Configuration.GetConnectionString("Redis")!);
+#else
+builder.Services.AddMecheraSecData(
+    EnvConfig.DbConnectionString!,
+    EnvConfig.RedisConnectionString!);
+#endif
+
+builder.Services.AddScoped<IUserAuthenticator, UserAuthenticator>()
     .AddScoped<IUserManager, UserManager>()
     .AddSingleton<IJwtGenerator, JwtGenerator>()
     .AddHostedService<DataSetupService>();
@@ -21,8 +30,17 @@ builder.Services.AddAuthorization()
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+#if DEBUG
         var config = builder.Configuration;
+#else
+        var jwtKey = EnvConfig.JwtKey;
+        var jwtIssuer = EnvConfig.JwtIssuer;
 
+        if (jwtKey == null || jwtIssuer == null)
+        {
+            throw new NullReferenceException("JWT settings are null");
+        }
+#endif
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -30,8 +48,13 @@ builder.Services.AddAuthorization()
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = config["Jwt:Issuer"],            
+#if RELEASE
+            ValidIssuer = jwtIssuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+#else
+            ValidIssuer = config["Jwt:Issuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!))
+#endif
         };
     });
 
