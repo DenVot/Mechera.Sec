@@ -9,7 +9,9 @@ namespace Mechera.Sec.Data;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddMecheraSecData(this IServiceCollection serviceCollection, IConfiguration configuration) =>
+    public static IServiceCollection AddMecheraSecData(this IServiceCollection serviceCollection,
+        string dbConnectionString, 
+        string redisConnectionString) =>
 #if DEBUG
         serviceCollection
             .AddScoped<IUsersRepository, EfUsersRepository>()
@@ -24,14 +26,13 @@ public static class ServiceCollectionExtensions
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors());
 #else
-        .AddScoped<IUsersRepository, EfUsersRepository>(serviceProvider => 
-                new EfUsersRepository(serviceProvider.GetRequiredService<MecheraDbContext>()))
+        serviceCollection.AddScoped<IUsersRepository, EfUsersRepository>()
             .Decorate<IUsersRepository, RedisCacheUsersRepository>()
             .AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = configuration.GetConnectionString("Redis");                
+                options.Configuration = redisConnectionString;
             })
             .AddDbContext<MecheraDbContext>(dbContextOptions => dbContextOptions
-                .UseMySql(configuration.GetConnectionString("MecheraSecDB"), new MySqlServerVersion(new Version(8, 0, 31))));
+                .UseMySql(dbConnectionString, new MySqlServerVersion(new Version(8, 0, 31))));
 #endif
 }
